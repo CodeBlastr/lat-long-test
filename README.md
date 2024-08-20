@@ -1,7 +1,7 @@
 # Installation
 
 *Prerequisite*
-You must have docker installed. 
+You must have [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed. 
 
 ### Steps
 1. Clone the project
