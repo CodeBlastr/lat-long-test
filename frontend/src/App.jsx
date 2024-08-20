@@ -2,15 +2,16 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import Header from './components/Header';
 import Footer from './components/Footer';
+import MapComponent from './components/MapComponent';
 import '/styles/app.css';
 
 function App() {
     const [coords, setCoords] = useState({ lat: '', lng: '' });
     const [notes, setNotes] = useState('');
     const [converted, setConverted] = useState('');
+    const [showMap, setShowMap] = useState(false);
 
     const handleConvert = () => {
-        // Conversion logic from DD to DMS
         const convertDMS = (coord) => {
             const absolute = Math.abs(coord);
             const degrees = Math.floor(absolute);
@@ -21,12 +22,6 @@ function App() {
         };
 
         setConverted(`Lat: ${convertDMS(coords.lat)}, Lng: ${convertDMS(coords.lng)}`);
-    };
-
-    const validateCoordinates = (lat, lng) => {
-        const latNum = parseFloat(lat);
-        const lngNum = parseFloat(lng);
-        return latNum >= -90 && latNum <= 90 && lngNum >= -180 && lngNum <= 180;
     };
 
     const handleSave = () => {
@@ -46,6 +41,12 @@ function App() {
             });
     };
 
+    const validateCoordinates = (lat, lng) => {
+        const latNum = parseFloat(lat);
+        const lngNum = parseFloat(lng);
+        return latNum >= -90 && latNum <= 90 && lngNum >= -180 && lngNum <= 180;
+    };
+
     return (
         <div>
             <Header />
@@ -54,8 +55,9 @@ function App() {
             <input type="text" placeholder="Notes" value={notes} onChange={e => setNotes(e.target.value)} />
             <button onClick={handleConvert}>Convert Coords</button>
             <button onClick={handleSave}>Save Coords</button>
+            <button onClick={() => setShowMap(true)}>Show on Map</button>
             <div>{converted}</div>
-            {/* Google Maps integration here */}
+            {showMap && <MapComponent coords={coords} />}
             <Footer />
         </div>
     );
