@@ -23,14 +23,32 @@ function App() {
         setConverted(`Lat: ${convertDMS(coords.lat)}, Lng: ${convertDMS(coords.lng)}`);
     };
 
+    const validateCoordinates = (lat, lng) => {
+        const latNum = parseFloat(lat);
+        const lngNum = parseFloat(lng);
+        return latNum >= -90 && latNum <= 90 && lngNum >= -180 && lngNum <= 180;
+    };
+
     const handleSave = () => {
+        if (!validateCoordinates(coords.lat, coords.lng)) {
+            alert('Invalid latitude or longitude values. Please enter values within the correct range.');
+            return;
+        }
+
         axios.post('http://localhost:8000/coords', { notes, ...coords })
-            .then(res => console.log('Saved successfully:', res.data))
-            .catch(err => console.error('Error saving data:', err));
+            .then(res => {
+                console.log('Saved successfully:', res.data);
+                alert('Coordinates saved successfully!');
+            })
+            .catch(err => {
+                console.error('Error saving data:', err);
+                alert('Failed to save coordinates. Check console for more details.');
+            });
     };
 
     return (
         <div>
+            <Header />
             <input type="text" placeholder="Latitude" value={coords.lat} onChange={e => setCoords({ ...coords, lat: e.target.value })} />
             <input type="text" placeholder="Longitude" value={coords.lng} onChange={e => setCoords({ ...coords, lng: e.target.value })} />
             <input type="text" placeholder="Notes" value={notes} onChange={e => setNotes(e.target.value)} />
@@ -38,6 +56,7 @@ function App() {
             <button onClick={handleSave}>Save Coords</button>
             <div>{converted}</div>
             {/* Google Maps integration here */}
+            <Footer />
         </div>
     );
 }
