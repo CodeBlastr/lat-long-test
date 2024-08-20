@@ -24,7 +24,7 @@ function App() {
     };
 
     const handleSave = () => {
-        axios.post('/coords', { notes, ...coords })
+        axios.post('http://localhost:8000/coords', { notes, ...coords })
             .then(res => console.log('Saved successfully:', res.data))
             .catch(err => console.error('Error saving data:', err));
     };

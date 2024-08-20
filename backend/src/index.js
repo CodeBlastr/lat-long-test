@@ -1,10 +1,25 @@
 const fastify = require('fastify')({ logger: true });
 const mysql = require('mysql');
 
+// Declare a route
+fastify.get('/', async (request, reply) => {
+  return { hello: 'world' }
+});
+
+fastify.get('/coords', async (request, reply) => {
+    fastify.log.info('Received request for /coords');
+    try {
+        return reply.send({ hello: 'world' });
+    } catch (error) {
+        fastify.log.error('Error handling /coords:', error);
+        reply.status(500).send({ error: 'Internal Server Error' });
+    }
+});
+
 // MySQL connection
 const db = mysql.createPool({
     connectionLimit: 10,
-    host: 'localhost',
+    host: 'db',
     user: 'root',
     password: 'password',
     database: 'coordinates'
@@ -23,9 +38,15 @@ fastify.post('/coords', (request, reply) => {
     );
 });
 
-// Start server
-fastify.listen(8000, err => {
-    if (err) console.log(err);
-    console.log('Server is running on http://localhost:8000');
-});
+// Run the server!
+const start = async () => {
+  try {
+    await fastify.listen(8000, '0.0.0.0');
+    fastify.log.info(`server listening on ${fastify.server.address().port}`);
+  } catch (err) {
+    fastify.log.error(err);
+    process.exit(1);
+  }
+}
+start();
 
