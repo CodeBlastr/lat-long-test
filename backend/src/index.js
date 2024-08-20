@@ -36,19 +36,20 @@ fastify.get('/coords', async (request, reply) => {
 
 // POST route to save coordinates
 fastify.post('/coords', (request, reply) => {
-    const { notes, lat, lng } = request.body;
-    db.query(
-        'INSERT INTO coords_data (notes, lat, lng) VALUES (?, ?, ?)',
-        [notes, lat, lng],
-        (error, results) => {
-            if (error) {
-                fastify.log.error('Database error:', error);
-                return reply.status(500).send({ error: 'Database error' });
-            }
-            reply.send({ success: true, id: results.insertId });
-        }
-    );
+  const { notes, lat, lng } = request.body;
+  db.query(
+      'INSERT INTO coords_data (notes, lat, lng) VALUES (?, ?, ?)',
+      [notes, lat, lng],
+      (error, results) => {
+          if (error) {
+              fastify.log.error('Database error:', error);
+              return reply.status(500).send({ error: 'Database error', details: error.message });
+          }
+          reply.send({ success: true, id: results.insertId });
+      }
+  );
 });
+
 
 // Function to start the server
 const start = async () => {
